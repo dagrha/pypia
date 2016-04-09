@@ -1,6 +1,6 @@
 ## Private Internet Access installation scripts for various Linux distributions
 
-While [Private Internet Access](https://www.privateinternetaccess.com/) (PIA) provides high quality and inexpensive VPN services, the process of setting up easy-to-use VPN routes that are accessible from the NetworkManager applet GUI on Linux is not as straight-forward as it should be. The purpose of this repository is to host and maintain installation scripts that will automatically populate NetworkManager VPN routes for use with PIA OpenVPN service on various Linux distributions.
+While [Private Internet Access](https://www.privateinternetaccess.com/) (PIA) provides high quality and inexpensive VPN services, the process of setting up easy-to-use VPN routes that are accessible from the NetworkManager applet GUI on Linux is not as straight-forward as it could be. The purpose of this repository is to host and maintain installation scripts that will automatically populate NetworkManager VPN routes for use with PIA OpenVPN service on various Linux distributions.
 
 The scripts found in this repository are based on an installation script provided by PIA [here](https://www.privateinternetaccess.com/pages/client-support/ubuntu-openvpn). Unfortunately those instructions for installation apply only to Ubuntu 12.04, and in their current form are not extensible to other Linux distributions, even some of those that are in the Ubuntu family (e.g. Lubuntu).
 
@@ -16,7 +16,7 @@ The scripts found in this repository are based on an installation script provide
 * System
  * network manager
  * python
- * network-manager-openvpn
+ * openvpn (here installed as a dependency of _NetworkManager-openvpn_)
  * uuidgen (part of the uuid-runtime toolset)
 The script checks for the *python*, *network-manager-openvpn*, and *uuidgen* dependencies and will install them if they are missing. It is assumed that NetworkManager will already be installed, since it comes by default on many distibutions, but that may not be the case for Arch, etc.
 
@@ -43,4 +43,4 @@ Route/VPN server information is downloaded from [this page](https://www.privatei
 6. If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet.
 
 #### Contributions
-While not required, any improvements for existing scripts or modifications that add applicability to other distros is greatly appreciated and encouraged.
+Any improvements for existing scripts or modifications that add applicability to other distros are greatly appreciated and encouraged.
