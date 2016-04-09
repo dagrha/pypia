@@ -9,7 +9,7 @@ The scripts found in this repository are based on an installation script provide
 * OpenSUSE Tumbleweed, Leap
 * Manjaro 15
 * Ubuntu flavors:
- * Ubuntu 16.04
+ * Ubuntu 15.10
  * Lubuntu 16.04
 
 #### Requirements
