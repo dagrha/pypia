@@ -41,9 +41,5 @@ Route/VPN server information is downloaded from [this page](https://www.privatei
 5. At some point in the installation process you will be prompted for your PIA-issued user ID (typically starts with a `p` and is followed by a bunch of numbers).
 6. If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet.
 
-#### License
-MIT
-
-Since this work is derivative of the original install script provided by PIA, we've chosen a generic and permissive license here, though note that PIA does not provide license info for their open source script. 
-
+#### Contributions
 While not required, any improvements for existing scripts or modifications that add applicability to other distros is greatly appreciated and encouraged.
