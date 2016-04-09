@@ -59,21 +59,21 @@ verify_running_as_root( )
   fi
 }
 
-install_python_version( )
+install_python( )
 {
-  if ! dpkg -l python2.7 | grep '^ii' > /dev/null ; then
-    echo -n 'Package python2.7 required. Install? (y/n): '
+  if ! dpkg -l python | grep '^ii' > /dev/null ; then
+    echo -n 'Package python required. Install? (y/n): '
     read install_python
     if [ $install_python = 'y' ]; then
-      echo "Installing python2.7.."
-      if ! apt-get install python2.7; then
-        error "Error installing python2.7 Aborting.."
+      echo "Installing python.."
+      if ! apt install python; then
+        error "Error installing python. Aborting.."
       fi
     else
-      error "Package python2.7 is required for installation. Aborting.."
+      error "Package python is required for installation. Aborting.."
     fi
   else
-    echo "Package python2.7 already installed"
+    echo "Package python already installed"
   fi
 }
 
@@ -84,7 +84,7 @@ install_open_vpn( )
     read install_openvpn
     if [ $install_openvpn = 'y' ]; then
       echo "Installing network-manager-openvpn.."
-      if ! apt-get install network-manager-openvpn; then
+      if ! apt install network-manager-openvpn; then
         error "Error installing network-manager-openvpn. Aborting.."
       fi
     else
@@ -154,7 +154,7 @@ parse_server_info( )
 payload = '$json'
 import json
 d = json.loads(payload)
-print "\n".join([d[k]['name']+'$SPLIT_TOKEN'+d[k]['dns'] for k in d.keys() if k != 'info'])
+print("\n".join([d[k]['name']+'$SPLIT_TOKEN'+d[k]['dns'] for k in d.keys() if k != 'info']))
 EOF
 }
 
@@ -224,7 +224,7 @@ done
 
 
 verify_running_as_root
-install_python_version
+install_python
 install_open_vpn
 install_uuidgen
 read_user_login
