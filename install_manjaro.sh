@@ -79,7 +79,7 @@ install_python( )
 
 install_open_vpn( )
 {
-  if ! packman -Qi networkmanager-openvpn | grep 'Installed Size' > /dev/null ; then
+  if ! pacman -Qi networkmanager-openvpn | grep 'Installed Size' > /dev/null ; then
     echo -n 'Package network-manager-openvpn required. Install? (y/n): '
     read install_openvpn
     if [ $install_openvpn = 'y' ]; then
