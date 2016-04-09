@@ -180,8 +180,7 @@ EOF
 restart_network_manager( )
 {
   echo 'Restarting network manager..'
-  nmcli networking off
-  nmcli networking on 
+  systemctl restart NetworkManager.service
 }
 
 EXITCODE=0
