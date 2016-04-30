@@ -55,6 +55,15 @@ read_user_login( )
   fi
 }
 
+read_user_passwd( )
+{
+  echo -n "Please enter your PIA password. This gets added to your VPN config files: "
+  read -s PASSWD
+  if [ -z $PASSWD ]; then
+    error "A password must be provided for the installation to proceed"
+  fi
+}
+
 verify_running_as_root( )
 {
   if [ `/usr/bin/id -u` -ne 0 ]; then
@@ -167,8 +176,11 @@ username=$LOGIN
 comp-lzo=yes
 remote=$dns
 connection-type=password
-password-flags=1
+password-flags=0
 ca=/etc/openvpn/ca.crt
+
+[vpn-secrets]
+password=$PASSWD
 
 [ipv4]
 method=auto
@@ -212,6 +224,7 @@ verify_running_as_root
 install_python_version
 install_open_vpn
 read_user_login
+read_user_passwd
 copy_crt
 parse_server_info
 write_config_files

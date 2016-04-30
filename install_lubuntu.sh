@@ -52,6 +52,15 @@ read_user_login( )
   fi
 }
 
+read_user_passwd( )
+{
+  echo -n "Please enter your PIA password. This gets added to your VPN config files: "
+  read -s PASSWD
+  if [ -z $PASSWD ]; then
+    error "A password must be provided for the installation to proceed"
+  fi
+}
+
 verify_running_as_root( )
 {
   if [ `/usr/bin/id -u` -ne 0 ]; then
@@ -148,7 +157,7 @@ EOF
 parse_server_info( )
 {
   echo 'Loading servers information..'
-  json=`wget -q -O - 'https://raw.githubusercontent.com/dagrha/PIA_install_scripts/master/routes.json' | head -1`
+  json=`wget -q -O - 'https://www.privateinternetaccess.com/vpninfo/servers?version=24' | head -1`
 
   python > $SERVER_INFO <<EOF
 payload = '$json'
@@ -182,8 +191,11 @@ username=$LOGIN
 comp-lzo=yes
 remote=$dns
 connection-type=password
-password-flags=1
+password-flags=0
 ca=/etc/openvpn/ca.crt
+
+[vpn-secrets]
+password=$PASSWD
 
 [ipv4]
 method=auto
@@ -228,6 +240,7 @@ install_python
 install_open_vpn
 install_uuidgen
 read_user_login
+read_user_passwd
 copy_crt
 parse_server_info
 write_config_files
