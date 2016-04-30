@@ -48,7 +48,7 @@ version( )
 
 read_user_login( )
 {
-  echo -n "Please enter your login: "
+  echo -n "Please enter your PIA login: "
   read LOGIN
   if [ -z $LOGIN ]; then
     error "A login must be provided for the installation to proceed"
