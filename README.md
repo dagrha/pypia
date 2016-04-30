@@ -38,8 +38,8 @@ Route/VPN server information is downloaded from [this page](https://www.privatei
    `sudo sh ./install_fedora.sh`
    Change `install_fedora.sh` to the name of the `.sh` script that matches the distribution you are using (e.g. `install_ubuntu.sh`, etc.) 
    
-4. Since the script needs root permissions to install dependencies, you will be prompted to enter your sudoer's password. 
-5. At some point in the installation process you will be prompted for your PIA-issued user ID (typically starts with a `p` and is followed by a bunch of numbers).
+4. Since the script needs root permissions to install dependencies and to write the VPN config files to `/etc/NetworkManager/system-connections/`, you will be prompted to enter your sudoer's password.
+5. At some point in the installation process you will be prompted for your PIA-issued user ID (typically starts with a `p` and is followed by a bunch of numbers). You will also be prompted for your password, which is simply saved to the config files (in plain text, but only su can view/edit those files).
 6. If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet.
 
 #### Contributions
