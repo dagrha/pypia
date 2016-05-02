@@ -58,7 +58,9 @@ read_user_login( )
 read_user_passwd( )
 {
   echo -n "Please enter your PIA password. This gets added to your VPN config files: "
-  read -s PASSWD
+  stty -echo
+  read PASSWD
+  stty echo
   if [ -z $PASSWD ]; then
     error "A password must be provided for the installation to proceed"
   fi
