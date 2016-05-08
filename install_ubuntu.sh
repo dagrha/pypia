@@ -4,7 +4,7 @@
 # regions to NetworkManager
 #
 # Version:
-#  Edited for Ubuntu 15.10
+#  Edited for Ubuntu 16.04 (also tested on 14.04)
 #
 # Requirements:
 #   should be run as root
