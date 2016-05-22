@@ -95,7 +95,7 @@ install_open_vpn( )
     read install_openvpn
     if [ $install_openvpn = 'y' ]; then
       echo "Installing networkmanager-openvpn.."
-      if ! apt install network-manager-openvpn; then
+      if ! pacman -S network-manager-openvpn; then
         error "Error installing networkmanager-openvpn. Aborting.."
       fi
     else
