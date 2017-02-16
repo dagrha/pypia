@@ -53,10 +53,13 @@ If your distribution of choice is not currently listed as supported, please take
 ```
 import subprocess
 def get_distro():
-       os_release = subprocess.check_output(['cat', '/etc/os-release']).decode('utf-8').splitlines()
-       os_dict = {i.split('=')[0]: i.split('=')[1].strip('"') for i in os_release if '=' in i}
-       distro = os_dict['ID'].lower()
-       return distro
+    os_release = subprocess.check_output(['cat', '/etc/os-release']).decode('utf-8').splitlines()
+    os_dict = {i.split('=')[0]: i.split('=')[1].strip('"') for i in os_release if '=' in i}
+    distro = os_dict['ID'].lower()
+    return distro
 get_distro()
 ```
 With that information, I can update the `package_info.json` file to include your distro. Or feel free to submit a pull request.
+
+#### License
+This python code in this project is distributed under GPLv3.
