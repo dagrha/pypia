@@ -19,7 +19,7 @@ The script has been designed to automatically detect your operating system. Curr
 * System
  * Python 3. This script is written in Python 3. Python 2 is not supported.
  * network manager
- * openvpn
+ * openvpn  
 The script installs the *network-manager-openvpn* package (name of package may be different depending on your distribution).
 
 * General
@@ -47,9 +47,10 @@ Route/VPN server information is downloaded from [this page](https://www.privatei
 
 #### Contributions
 If your distribution of choice is not currently listed as supported, please take a minute to help me add support! To add it, I'll need to know:
+
 1. The specific name of the `network-manager-openvpn` package in your particular package manager. Usually searching the package database for "openvpn" is enough to find it.
-1. The install command for your package manager (e.g. `apt install` or `dnf install`, etc.)
-1. At a python (3+) prompt, enter the following commands and let me know what the string returned from the `get_distro()` function is:
+2. The install command for your package manager (e.g. `apt install` or `dnf install`, etc.)
+3. At a python (3+) prompt, enter the following commands and let me know what the string returned from the `get_distro()` function is:
 ```
 import subprocess
 def get_distro():
@@ -62,4 +63,4 @@ get_distro()
 With that information, I can update the `package_info.json` file to include your distro. Or feel free to submit a pull request.
 
 #### License
-This python code in this project is distributed under GPLv3.
+The python code in this project is distributed under GPLv3.
