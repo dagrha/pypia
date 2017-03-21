@@ -13,17 +13,17 @@ The script has been designed to automatically detect your operating system. Curr
 * Antergos
 * Linuxmint
 
-***For other distros, please see note at end of this README***
+****For other distros, please see note at end of this README***
 
 #### Requirements
 * System
- * Python 3. This script is written in Python 3. Python 2 is not supported.
- * network manager
- * openvpn  
+  * Python 3. This script is written in Python 3. Python 2 is not supported.
+  * network manager
+  * openvpn  
 The script installs the *network-manager-openvpn* package (name of package may be different depending on your distribution).
 
 * General
- * PIA subscription (which is a pay service).
+  * PIA subscription (which is a pay service).
 
 #### Other information
 PIA certificate, which is automatically downloaded by the script, is provided by PIA [here](https://www.privateinternetaccess.com/openvpn/ca.crt).
