@@ -12,6 +12,7 @@ The script has been designed to automatically detect your operating system. Curr
 * Elementary OS
 * Antergos
 * Linuxmint
+* openSUSE
 
 ****For other distros, please see note at end of this README***
 
