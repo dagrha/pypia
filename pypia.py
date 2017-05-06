@@ -20,9 +20,12 @@ Usage
 
 """
 
+import sys
+if sys.version_info < (3,0):
+    print("Sorry, this script requires python 3.x")
+    sys.exit(1)
 import os
 import subprocess
-import sys
 import getpass
 import uuid
 import json
@@ -104,25 +107,29 @@ def get_credentials():
 
     """
     username = input('\nEnter your PIA username: ')
-    password = getpass.getpass(prompt='Enter your password: ')
+    while True:
+        password = getpass.getpass(prompt='Enter your password: ')
+        password2 = getpass.getpass(prompt='Please re-enter password: ')
+        if password == password2: break
+        print("\nPasswords do not match. Please re-enter:")
     return username, password
 
 
 def copy_cert():
     """
     Download and save Private Internet Access certificate to
-    `/etc/openvpn/ca.crt`.
+    `/etc/openvpn/ca.rsa.2048.crt`.
 
     An internet connection is needed if cert hasn't already been downloaded.
     If for some reason the cert is not able to be downloaded, or if it hasn't
-    previously been downloaded and saved to `/etc/openvpn/ca.crt`, the script
+    previously been downloaded and saved to `/etc/openvpn/ca.rsa.2048.crt`, the script
     will exit.
 
     """
-    cert_address = 'https://www.privateinternetaccess.com/openvpn/ca.crt'
+    cert_address = 'https://www.privateinternetaccess.com/openvpn/ca.rsa.2048.crt'
     try:
-        urllib.request.urlretrieve(cert_address, '/etc/openvpn/ca.crt')
-        if os.path.exists('/etc/openvpn/ca.crt'):
+        urllib.request.urlretrieve(cert_address, '/etc/openvpn/ca.rsa.2048.crt')
+        if os.path.exists('/etc/openvpn/ca.rsa.2048.crt'):
             print('PIA certificate downloaded and saved to /etc/openvpn/')
     except (HTTPError, URLError):
         sys.exit('\nPIA cert was not able to be downloaded and saved. ' +
@@ -201,7 +208,10 @@ def output_config_file(vpn_dict):
         f.write('remote={}\n'.format(vpn_dict['dns']))
         f.write('connection-type=password\n')
         f.write('password-flags=0\n')
-        f.write('ca=/etc/openvpn/ca.crt\n\n')
+        f.write('ca=/etc/openvpn/ca.rsa.2048.crt\n')
+        f.write('port=1198\n')
+        f.write('auth=SHA1\n')
+        f.write('cipher=AES-128-CBC\n\n')
         f.write('[vpn-secrets]\n')
         f.write('password={}\n\n'.format(password))
         f.write('[ipv4]\n')
