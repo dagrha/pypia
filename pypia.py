@@ -21,15 +21,15 @@ Usage
 """
 
 import sys
-if sys.version_info < (3,0):
-    print("Sorry, this script requires python 3.x")
-    sys.exit(1)
 import os
 import subprocess
 import getpass
 import uuid
 import json
-import urllib.request
+try:
+    import urllib.request
+except ImportError:
+    sys.exit("Sorry, this script requires python 3.x")
 
 
 def verify_running_as_root():
@@ -110,8 +110,9 @@ def get_credentials():
     while True:
         password = getpass.getpass(prompt='Enter your password: ')
         password2 = getpass.getpass(prompt='Please re-enter password: ')
-        if password == password2: break
-        print("\nPasswords do not match. Please re-enter:")
+        if password == password2:
+            break
+        print("\nPasswords do not match. Please try again.")
     return username, password
 
 
