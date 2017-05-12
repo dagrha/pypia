@@ -14,6 +14,7 @@ The script has been designed to automatically detect your operating system. Curr
 * Linuxmint
 * openSUSE
 * Kali
+* Arch
 
 ****For other distros, please see note at end of this README***
 
