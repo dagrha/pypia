@@ -53,7 +53,9 @@ def disconnect_vpn():
     vpns = []
     for i in active_cons.split('\n'):
         if re.search('\svpn\s', i):
-            vpns.append(re.split('\s+\S{36}\s+', i)[0])
+            vpn = re.split('\s+\S{36}\s+', i)[0]
+            if vpn.startswith('PIA'):
+                vpns.append(vpn)
     for i in vpns:
         print('Disconnecting {}...'.format(i))
         subprocess.call(['nmcli', 'con', 'down', 'id', i])
