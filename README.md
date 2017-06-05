@@ -1,11 +1,11 @@
 ## Private Internet Access configuration scripts for various Linux distributions
 
-[Private Internet Access](https://www.privateinternetaccess.com/) (PIA) provides high quality and inexpensive VPN services, but installing VPN routes on linux can be tedious or require the installation of third party software. The purpose of this repository is to host and maintain installation scripts that will automatically populate NetworkManager VPN routes for use with PIA OpenVPN service on various Linux distributions and to avoid the installation of any third party programs.
+[Private Internet Access](https://www.privateinternetaccess.com/pages/buy-vpn/pypia) (PIA) provides high quality and inexpensive VPN services, but installing VPN routes on linux can be tedious or require the installation of third party software. The purpose of this repository is to host and maintain configuration scripts that will automatically populate NetworkManager VPN routes for use with PIA OpenVPN service on various Linux distributions and to avoid the installation of any third party programs.
 
 This project was originally a set of shell scripts under the name `PIA_install_scripts`, but the project now consists of a single python script, which I'm calling **pypia.py**. The shell scripts are still accessible in the /legacy_scripts/ directory but are no longer supported.
 
 #### Currently supported distributions
-The script has been designed to automatically detect your operating system. Currently the supported distros are:
+The `pypia` script has been designed to automatically detect your operating system. Currently the supported distros are:
 * Fedora
 * Manjaro
 * Ubuntu (various flavors, e.g. Lubuntu, should also work)
@@ -45,7 +45,20 @@ Route/VPN server information is downloaded from [this page](https://www.privatei
 
 4. Since the script needs root permissions to install dependencies via the package manager and to write the VPN config files to `/etc/NetworkManager/system-connections/`, you will be prompted to enter the root password.
 5. At some point in the installation process you will be prompted for your PIA-issued user ID (typically starts with a "p" and is followed by a bunch of numbers). You will also be prompted for your password, which is simply saved to the config files (in plain text, but only root user can view/edit those files).
-6. If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet.
+6. If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet or via the `nmcli` command line tool.
+
+#### Randomized VPN script
+**Only tested so far on Ubuntu*
+
+I've added a python 3 script that will connect to a random PIA VPN configuration that the `pypia` script configured. To use it, `cd` to the directory where you've cloned this repo, run
+
+1. `$ chmod +x random_pia.py` to make the file executable, and run
+
+2. `$ ./random_pia.py` from the command line.
+
+By default it only selects from US configurations, but you can modify that with the `-r` flag, for example `-r all` for any network worldwide or `-r int` for non-US networks. See `--help` for more details.
+
+If you are already connected to a PIA VPN, this script will disconnect the current connection and establish a new connection.
 
 #### Contributions
 If your distribution of choice is not currently listed as supported, please take a minute to help me add support! To add it, I'll need to know:
@@ -66,3 +79,5 @@ With that information, I can update the `package_info.json` file to include your
 
 #### License
 The python code in this project is distributed under GPLv3.
+
+If you want to [sign up for PIA](https://www.privateinternetaccess.com/pages/buy-vpn/pypia), feel free to use [my affiliate link](https://www.privateinternetaccess.com/pages/buy-vpn/pypia). If you'd rather not use that link, no worries! This is free software that I hope you continue to use and enjoy.
