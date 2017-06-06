@@ -18,7 +18,6 @@ from random import randint
 import subprocess
 import re
 import argparse
-import sys
 
 
 def get_pia_connections(region):
@@ -28,13 +27,14 @@ def get_pia_connections(region):
         search_term = 'PIA - '
     sys_cons = '/etc/NetworkManager/system-connections/'
     if region == 'int':
-        return [i for i in os.listdir(sys_cons) if (search_term in i) & ('US' not in i)]
+        cons = [i for i in os.listdir(sys_cons) if (search_term in i) & ('US' not in i)]
     else:
-        return [i for i in os.listdir(sys_cons) if search_term in i]
+        cons = [i for i in os.listdir(sys_cons) if search_term in i]
+    return cons
 
 
 def pick_rand_con(cons):
-    return cons[randint(0, len(cons))]
+    return cons[randint(0, len(cons) - 1)]
 
 
 def make_connection(con):
@@ -42,23 +42,26 @@ def make_connection(con):
     subprocess.call(['nmcli', 'con', 'up', 'id', con])
 
 
-def connect_vpn(region):
+def connect_vpn(region, disconnected):
     cons = get_pia_connections(region)
     con = pick_rand_con(cons)
+    while con in disconnected:
+        con = pick_rand_con(cons)
     make_connection(con)
 
 
 def disconnect_vpn():
     active_cons = subprocess.check_output(['nmcli', 'con', 'show', '--active']).decode('utf-8')
-    vpns = []
+    active_pia = []
     for i in active_cons.split('\n'):
         if re.search('\svpn\s', i):
             vpn = re.split('\s+\S{36}\s+', i)[0]
             if vpn.startswith('PIA'):
-                vpns.append(vpn)
-    for i in vpns:
+                active_pia.append(vpn)
+    for i in active_pia:
         print('Disconnecting {}...'.format(i))
         subprocess.call(['nmcli', 'con', 'down', 'id', i])
+    return active_pia
 
 
 if __name__ == '__main__':
@@ -76,5 +79,5 @@ if __name__ == '__main__':
     if args.disconnect:
         disconnect_vpn()
     else:
-        disconnect_vpn()
-        connect_vpn(region)
+        disconnected = disconnect_vpn()
+        connect_vpn(region, disconnected)
