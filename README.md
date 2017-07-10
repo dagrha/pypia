@@ -4,6 +4,7 @@
 
 This project was originally a set of shell scripts under the name `PIA_install_scripts`, but the project now consists of a single python script, which I'm calling **pypia.py**. The shell scripts are still accessible in the /legacy_scripts/ directory but are no longer supported.
 
+### pypia (`pypia.py`)
 #### Currently supported distributions
 The `pypia` script has been designed to automatically detect your operating system. Currently the supported distros are:
 * Fedora
@@ -48,20 +49,24 @@ Route/VPN server information is downloaded from [this page](https://www.privatei
 5. At some point in the installation process you will be prompted for your PIA-issued user ID (typically starts with a "p" and is followed by a bunch of numbers). You will also be prompted for your password, which is simply saved to the config files (in plain text, but only root user can view/edit those files).
 6. If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet or via the `nmcli` command line tool.
 
-#### Randomized VPN script
-**Only tested so far on Ubuntu*
+### PIA Toolkit (pia_toolkit.py)
+#### Randomized VPN
+**Only tested so far on Ubuntu**
 
 I've added a python 3 script that will connect to a random PIA VPN configuration that the `pypia` script configured. To use it, `cd` to the directory where you've cloned this repo, run
 
-1. `$ chmod +x random_pia.py` to make the file executable, and run
+1. `$ chmod +x pia_toolkit.py` to make the file executable, and run
 
-2. `$ ./random_pia.py` from the command line.
+2. `$ ./pia_toolkit.py` from the command line.
 
 By default it only selects from US configurations, but you can modify that with the `-r` flag, for example `-r all` for any network worldwide or `-r int` for non-US networks. See `--help` for more details.
 
 If you are already connected to a PIA VPN, this script will disconnect the current connection and establish a new connection.
 
-#### Contributions
+#### Fastest connection
+PIA Toolkit also includes a `-f` option. Setting this flag will initiate ping tests to all PIA hosts and upon completion will connect to the fastest (based on the average latency of 3 ping packets). By default it only checks US connections but you can change that with the `-r` flag. See `--help` for more details.
+
+### Contributions
 If your distribution of choice is not currently listed as supported, please take a minute to help me add support! To add it, I'll need to know:
 
 1. The specific name of the `network-manager-openvpn` package in your particular package manager. Usually searching the package database for "openvpn" is enough to find it.
