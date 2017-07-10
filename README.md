@@ -64,7 +64,9 @@ By default it only selects from US configurations, but you can modify that with 
 If you are already connected to a PIA VPN, this script will disconnect the current connection and establish a new connection.
 
 #### Fastest connection
-PIA Toolkit also includes a `-f` option. Setting this flag will initiate ping tests to all PIA hosts and upon completion will connect to the fastest (based on the average latency of 3 ping packets). By default it only checks US connections but you can change that with the `-r` flag. See `--help` for more details.
+PIA Toolkit also includes a `-f` option. Setting this flag will initiate ping tests to all PIA hosts and upon completion will connect to the fastest (based on the average latency of 3 ping packets). By default it only checks US connections but you can change that with the `-r` flag. See `--help` for more details. Latencies are tabulated and shown in your terminal:
+
+![Example tabulation of latencies after using `-f` flag](https://i.imgur.com/gUDO4p0.png)
 
 ### Contributions
 If your distribution of choice is not currently listed as supported, please take a minute to help me add support! To add it, I'll need to know:
