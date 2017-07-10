@@ -49,7 +49,7 @@ Route/VPN server information is downloaded from [this page](https://www.privatei
 5. At some point in the installation process you will be prompted for your PIA-issued user ID (typically starts with a "p" and is followed by a bunch of numbers). You will also be prompted for your password, which is simply saved to the config files (in plain text, but only root user can view/edit those files).
 6. If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet or via the `nmcli` command line tool.
 
-### PIA Toolkit (pia_toolkit.py)
+### PIA Toolkit (`pia_toolkit.py`)
 #### Randomized VPN
 **Only tested so far on Ubuntu**
 
