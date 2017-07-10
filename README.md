@@ -51,7 +51,7 @@ Route/VPN server information is downloaded from [this page](https://www.privatei
 
 ### PIA Toolkit (`pia_toolkit.py`)
 #### Randomized VPN
-**Only tested so far on Ubuntu**
+_Only tested so far on Ubuntu_
 
 I've added a python 3 script that will connect to a random PIA VPN configuration that the `pypia` script configured. To use it, `cd` to the directory where you've cloned this repo, run
 
