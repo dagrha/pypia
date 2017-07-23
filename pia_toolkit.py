@@ -7,10 +7,10 @@ connection, shuffle your connection, or disconnect completely.
 Usage:
 -----
 if script is executable ($ chmod +x random_pia.py):
-    ./random_pia.py [-r {us, all, int}] [-d, --disconnect]
+    ./pia_toolkit.py [-r {us, all, int}] [-d, --disconnect]
 
 otherwise if it's not executable you can do:
-    python3 random_pia.py [-r {us, all, int}] [-d, --disconnect]
+    python3 pia_toolkit.py [-r {us, all, int}] [-d, --disconnect]
 """
 
 import os
