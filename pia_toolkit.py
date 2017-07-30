@@ -119,26 +119,35 @@ class Latencies():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Connection tools for PIA VPNs.')
+    parser.add_argument('-p', '--ping', action='store_true',
+                        help='ping each vpn server and list latencies')
+    parser.add_argument('-s', '--shuffle', action='store_true',
+                        help='connect to or shuffle a random vpn')
     parser.add_argument('-r', '--region', choices=['us', 'all', 'int'],
                         help='"us" for US only, "int" for non-US, "all" for worldwide')
-    parser.add_argument('-d', '--disconnect', action='store_true',
-                        help='disconnect current PIA vpn connection')
     parser.add_argument('-f', '--fastest', action='store_true',
                         help='connect to network with lowest ping latency')
+    parser.add_argument('-d', '--disconnect', action='store_true',
+                        help='disconnect current PIA vpn connection')
     args = parser.parse_args()
+    if not any(vars(args).values()):
+        parser.print_help()
+        parser.exit(1)
     if not args.region:
         region = 'us'
     else:
         region = args.region
-
     if args.disconnect:
         disconnect_vpn()
-    elif args.fastest:
+    if args.fastest:
         disconnect_vpn()
         lat = Latencies(region)
         print(lat)
         make_connection(lat.fastest)
-    else:
+    elif args.ping:
+        lat = Latencies(region)
+        print(lat)
+    if args.shuffle:
         disconnected = disconnect_vpn()
         connect_vpn(region, disconnected)
