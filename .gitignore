@@ -9,3 +9,6 @@ MANIFEST.in
 
 # Obsolete
 legacy_scripts
+
+# Other
+README.md.orig
