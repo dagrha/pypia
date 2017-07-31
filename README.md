@@ -2,9 +2,13 @@
 
 [Private Internet Access](https://www.privateinternetaccess.com/pages/buy-vpn/pypia) (PIA) provides high quality and inexpensive VPN services, but installing VPN routes on linux can be tedious or require the installation of third party applets. The purpose of this repository is to host and maintain a configuration package that will automatically populate NetworkManager keyfiles for use with PIA OpenVPN service on various Linux distributions and to avoid the installation of any third party applets.
 
-### pypia (`pypia.py`)
+#### Quickstart
+Install with `pip install pypia`
+
+Initiate with `sudo pypia -i`
+
 #### Currently supported distributions
-The `pypia` script has been designed to automatically detect your operating system. Currently the supported distros are:
+The `pypia` package has been designed to automatically detect your operating system. Currently the supported distros are:
 * Fedora
 * Manjaro
 * Ubuntu (various flavors, e.g. Lubuntu, should also work)
