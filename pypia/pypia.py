@@ -333,60 +333,62 @@ class Latencies():
                                                                k, self.latencies[k])
         return table
 
+def main():
+        parser = argparse.ArgumentParser(description='Connection tools for PIA VPNs.')
+        parser.add_argument('-i', '--initialize', action='store_true',
+                            help='configure pia vpn routes as networkmanager keyfiles. requires sudo priveleges. use this flag on first run and anytime you want to refresh pia vpn routes')
+        parser.add_argument('-p', '--ping', action='store_true',
+                            help='ping each vpn server and list latencies')
+        parser.add_argument('-s', '--shuffle', action='store_true',
+                            help='connect to or shuffle a random vpn')
+        parser.add_argument('-r', '--region', choices=['us', 'all', 'int'],
+                            help='"us" for US only, "int" for non-US, "all" for worldwide')
+        parser.add_argument('-f', '--fastest', action='store_true',
+                            help='connect to network with lowest ping latency')
+        parser.add_argument('-d', '--disconnect', action='store_true',
+                            help='disconnect current PIA vpn connection')
+        args = parser.parse_args()
+
+        def print_help_and_exit():
+            parser.print_help()
+            parser.exit(1)
+
+        if not any(vars(args).values()):
+            print_help_and_exit()
+
+        if args.initialize:
+            verify_running_as_root()
+            distro = Distro()
+            distro.install_packages()
+            pia = PiaConfigurations()
+            pia.get_credentials()
+            pia.copy_cert()
+            pia.delete_old_configs()
+            for vpn_dict in pia.configs_dict:
+                Keyfile(vpn_dict)
+            distro.restart_network_manager()
+            print("Creation of VPN config files was successful.\n")
+
+        if not args.region:
+            region = 'us'
+        else:
+            region = args.region
+            if not any([args.ping, args.shuffle, args.fastest]):
+                print_help_and_exit()
+        conn = Connection(region)
+        if args.disconnect:
+            conn.disconnect_vpn()
+        if args.fastest:
+            conn.disconnect_vpn()
+            lat = Latencies(region)
+            print(lat)
+            conn.make_connection(lat.fastest)
+        elif args.ping:
+            lat = Latencies(region)
+            print(lat)
+        if args.shuffle:
+            conn.disconnect_vpn()
+            conn.connect_random_vpn()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Connection tools for PIA VPNs.')
-    parser.add_argument('-i', '--initialize', action='store_true',
-                        help='configure pia vpn routes as networkmanager keyfiles. requires sudo priveleges. use this flag on first run and anytime you want to refresh pia vpn routes')
-    parser.add_argument('-p', '--ping', action='store_true',
-                        help='ping each vpn server and list latencies')
-    parser.add_argument('-s', '--shuffle', action='store_true',
-                        help='connect to or shuffle a random vpn')
-    parser.add_argument('-r', '--region', choices=['us', 'all', 'int'],
-                        help='"us" for US only, "int" for non-US, "all" for worldwide')
-    parser.add_argument('-f', '--fastest', action='store_true',
-                        help='connect to network with lowest ping latency')
-    parser.add_argument('-d', '--disconnect', action='store_true',
-                        help='disconnect current PIA vpn connection')
-    args = parser.parse_args()
-
-    def print_help_and_exit():
-        parser.print_help()
-        parser.exit(1)
-
-    if not any(vars(args).values()):
-        print_help_and_exit()
-
-    if args.initialize:
-        verify_running_as_root()
-        distro = Distro()
-        distro.install_packages()
-        pia = PiaConfigurations()
-        pia.get_credentials()
-        pia.copy_cert()
-        pia.delete_old_configs()
-        for vpn_dict in pia.configs_dict:
-            Keyfile(vpn_dict)
-        distro.restart_network_manager()
-        print("Creation of VPN config files was successful.\n")
-
-    if not args.region:
-        region = 'us'
-    else:
-        region = args.region
-        if not any([args.ping, args.shuffle, args.fastest]):
-            print_help_and_exit()
-    conn = Connection(region)
-    if args.disconnect:
-        conn.disconnect_vpn()
-    if args.fastest:
-        conn.disconnect_vpn()
-        lat = Latencies(region)
-        print(lat)
-        conn.make_connection(lat.fastest)
-    elif args.ping:
-        lat = Latencies(region)
-        print(lat)
-    if args.shuffle:
-        conn.disconnect_vpn()
-        conn.connect_random_vpn()
+    main()

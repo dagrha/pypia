@@ -1,8 +1,6 @@
-## Private Internet Access configuration scripts for various Linux distributions
+## Private Internet Access OpenVPN configuration package for various Linux distributions
 
-[Private Internet Access](https://www.privateinternetaccess.com/pages/buy-vpn/pypia) (PIA) provides high quality and inexpensive VPN services, but installing VPN routes on linux can be tedious or require the installation of third party software. The purpose of this repository is to host and maintain configuration scripts that will automatically populate NetworkManager VPN routes for use with PIA OpenVPN service on various Linux distributions and to avoid the installation of any third party programs.
-
-This project was originally a set of shell scripts under the name `PIA_install_scripts`, but the project now consists of a single python script, which I'm calling **pypia.py**. The shell scripts are still accessible in the /legacy_scripts/ directory but are no longer supported.
+[Private Internet Access](https://www.privateinternetaccess.com/pages/buy-vpn/pypia) (PIA) provides high quality and inexpensive VPN services, but installing VPN routes on linux can be tedious or require the installation of third party applets. The purpose of this repository is to host and maintain a configuration package that will automatically populate NetworkManager keyfiles for use with PIA OpenVPN service on various Linux distributions and to avoid the installation of any third party applets.
 
 ### pypia (`pypia.py`)
 #### Currently supported distributions
@@ -34,37 +32,29 @@ PIA certificate, which is automatically downloaded by the script, is provided by
 Route/VPN server information is downloaded from [this page](https://www.privateinternetaccess.com/vpninfo/servers).
 
 #### Installation
-1. Either download `pypia.py` and `package_info.json` from this repo directly, or clone the github repository to your local workstation.
-2. `cd` to the directory where the script was downloaded.   
+1. You can use pip to install this module:
+`pip install pypia`
+2. Once installed via `pip`, you should do `sudo pypia -i` to initialize, which will configure the NetworkManager keyfiles. The script needs root permissions to install dependencies via the package manager and to write the VPN config files to `/etc/NetworkManager/system-connections/`, so you will be prompted to enter the root password.
+3. At some point in the installation process you will be prompted for your PIA-issued user ID (typically starts with a "p" and is followed by a bunch of numbers). You will also be prompted for your password, which is simply saved to the config files (in plain text, but only root user can view/edit those files).
 
-   e.g. `cd ~/git/pypia/` or `cd ~/Downloads/`
+If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet or via the `nmcli` command line tool.
 
-3. Run the following command in the terminal:
+##### Other features
 
-   `sudo python3 pypia.py`
+    usage: pypia [-h] [-i] [-p] [-s] [-r {us,all,int}] [-f] [-d]
 
-   In some distributions, `python` PATH variable points to Python 3, but in others it points to Python 2. Specifying `python3` will usually work.
-
-4. Since the script needs root permissions to install dependencies via the package manager and to write the VPN config files to `/etc/NetworkManager/system-connections/`, you will be prompted to enter the root password.
-5. At some point in the installation process you will be prompted for your PIA-issued user ID (typically starts with a "p" and is followed by a bunch of numbers). You will also be prompted for your password, which is simply saved to the config files (in plain text, but only root user can view/edit those files).
-6. If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet or via the `nmcli` command line tool.
-
-### PIA Toolkit (pia_toolkit.py)
-#### Randomized VPN
-**Only tested so far on Ubuntu**
-
-I've added a python 3 script that will connect to a random PIA VPN configuration that the `pypia` script configured. To use it, `cd` to the directory where you've cloned this repo, run
-
-1. `$ chmod +x pia_toolkit.py` to make the file executable, and run
-
-2. `$ ./pia_toolkit.py` from the command line.
-
-By default it only selects from US configurations, but you can modify that with the `-r` flag, for example `-r all` for any network worldwide or `-r int` for non-US networks. See `--help` for more details.
-
-If you are already connected to a PIA VPN, this script will disconnect the current connection and establish a new connection.
-
-#### Fastest connection
-PIA Toolkit also includes a `-f` option. Setting this flag will initiate ping tests to all PIA hosts and upon completion will connect to the fastest (based on the average latency of 3 ping packets). By default it only checks US connections but you can change that with the `-r` flag. See `--help` for more details.
+    optional arguments:
+      -h, --help            show this help message and exit
+      -i, --initialize      configure pia vpn routes as networkmanager keyfiles.
+                            requires sudo priveleges. use this flag on first run
+                            and anytime you want to refresh pia vpn routes
+      -p, --ping            ping each vpn server and list latencies
+      -s, --shuffle         connect to or shuffle a random vpn
+      -r {us,all,int}, --region {us,all,int}
+                            "us" for US only, "int" for non-US, "all" for
+                            worldwide
+      -f, --fastest         connect to network with lowest ping latency
+      -d, --disconnect      disconnect current PIA vpn connection
 
 ### Contributions
 If your distribution of choice is not currently listed as supported, please take a minute to help me add support! To add it, I'll need to know:
