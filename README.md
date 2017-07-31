@@ -5,7 +5,7 @@
 #### Quickstart
 Install with `pip install pypia`
 
-Initiate with `sudo pypia -i`
+Initiate with `sudo pypia -i` (may instead need to run `sudo env "PATH=$PATH" pypia -i" if you get a command not found error)
 
 #### Currently supported distributions
 The `pypia` package has been designed to automatically detect your operating system. Currently the supported distros are:
