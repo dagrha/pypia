@@ -55,9 +55,10 @@ class Distro():
 
     def __init__(self):
         self.get_distro()
+        self.get_package_info()
 
     def get_package_info(self):
-        with open('./package_info.json', 'r') as package_info:
+        with open('./pypia/package_info.json', 'r') as package_info:
             package_dict = json.load(package_info)
         self.required_packages = package_dict['required_packages'][self.distro]
         self.install_command = package_dict['install_commands'][self.distro]
@@ -205,26 +206,26 @@ class PiaConfigurations():
 
 class Keyfile():
 
-    def __init__(self, vpn_dict, **kwargs):
+    def __init__(self, vpn_dict, username, password, **kwargs):
         self.config_dir = '/etc/NetworkManager/system-connections/'
         self.configs = vpn_dict
         self.cipher = kwargs.get('cipher', 'AES-128-CBC')
         self.auth = kwargs.get('auth', 'SHA1')
         self.port = kwargs.get('port', '1198')
-        self.config_file = '{}{}{}'.format(self.config_dir, 'PIA - ', self.configs['name'])
-        self.define_keyfile()
+        self.config_file = '{}{}{}'.format(self.config_dir, 'PIA - ', self.configs[1]['name'])
+        self.define_keyfile(username, password)
         self.create_keyfile()
 
-    def define_keyfile(self):
+    def define_keyfile(self, username, password):
         l = ['[connection]', 'id={}{}', 'uuid={}', 'type=vpn', 'autoconnect=false',
              '\n', '[vpn]', 'service-type=org.freedesktop.NetworkManager.openvpn',
              'username={}', 'comp-lzo=yes', 'remote={}', 'connection-type=password',
              'password-flags=0', 'ca=/etc/openvpn/ca.rsa.2048.crt', 'port={}',
              'auth={}', 'cipher={}', '\n', '[vpn-secrets]',
              'password={}', '\n', '[ipv4]', 'method=auto']
-        self.keyfile_string = '\n'.join(l).format('PIA - ', self.configs['name'],
+        self.keyfile_string = '\n'.join(l).format('PIA - ', self.configs[1]['name'],
                                                   uuid.uuid4(), username,
-                                                  self.configs['dns'], self.port,
+                                                  self.configs[1]['dns'], self.port,
                                                   self.auth, self.cipher,
                                                   password)
 
@@ -364,8 +365,8 @@ def main():
             pia.get_credentials()
             pia.copy_cert()
             pia.delete_old_configs()
-            for vpn_dict in pia.configs_dict:
-                Keyfile(vpn_dict)
+            for vpn_dict in pia.configs_dict.items():
+                Keyfile(vpn_dict, pia.username, pia.password)
             distro.restart_network_manager()
             print("Creation of VPN config files was successful.\n")
 
