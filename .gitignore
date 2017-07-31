@@ -1,0 +1,11 @@
+# IPython
+__pycache__
+
+# Packaging
+pypia.egg-info
+dist
+MANIFEST
+MANIFEST.in
+
+# Obsolete
+legacy_scripts
