@@ -265,7 +265,7 @@ class Connection():
         self.get_pia_connections()
         self.random_con = self.pick_rand_con()
         while self.random_con in self.active_pia:
-            self.random_con = self.pick_rand_con(self.cons)
+            self.random_con = self.pick_rand_con()
         self.make_connection(self.random_con)
 
     def disconnect_vpn(self):
