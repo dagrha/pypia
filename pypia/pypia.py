@@ -1,22 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-This script facilitates the configuration of Private Internet Access (PIA)
+This program facilitates the configuration of Private Internet Access (PIA)
 (https://www.privateinternetaccess.com/) Virtual Private Network (VPN) routes
-on various linux distributions. The script detects the operating system,
+on various linux distributions. The program detects the operating system,
 installs required packages, downloads the PIA certificate, downloads VPN
 server information, automatically creates openvpn configuration files to be
 used by Network Manager, and restarts Network Manager.
 
-Upon completion of the script, PIA VPN routes are accessible via the Network
-Manager Applet, or via `nmcli`.
+Upon initialization of the program using the `-i` flag, PIA VPN routes are
+accessible via the NetworkManager Applet, or via `nmcli`. Connection can be
+shuffled or fastest route can be selected. Use `--help` for usage details.
 
-This is a Python 3 script and will not work with Python 2. Root priveleges
+This is a Python 3 program and will not work with Python 2. Root priveleges
 are needed to write configuration files to `/etc/` and to restart the Network
 Manager daemon.
 
-Usage
------
-    sudo python3 pypia.py
+Installation
+------------
+    pip install pypia
+
+Initial usage
+-------------
+    pypia -i
 
 """
 
@@ -31,31 +36,29 @@ import re
 import argparse
 from threading import Thread
 from queue import Queue
+import tempfile
 try:
     import urllib.request
 except ImportError:
     sys.exit("Sorry, this script requires python 3.x")
 
 
-def verify_running_as_root():
-    """
-    Check that user has root priveleges.
-
-    This script will write configuration files to `/etc/` so root priveleges
-    are required. If priveleges are insufficient, script will exit.
-
-    """
-    if os.getuid() != 0:
-        sys.exit('Script must be run as root in order to write config ' +
-                 'files to /etc/ and to restart the network manager service' +
-                 ' upon completion. Exiting.\n')
-
-
 class Distro():
+    """
+    Handles detection of Linux distribution, installs required packages,
+    and restarts network daemon.
+    """
 
     def __init__(self):
         self.get_distro()
         self.get_package_info()
+
+    def get_distro(self):
+        os_release = subprocess.check_output(['cat', '/etc/os-release']) \
+            .decode('utf-8').splitlines()
+        self.os_dict = {i.split('=')[0]: i.split('=')[1].strip('"')
+                   for i in os_release if '=' in i}
+        self.distro = self.os_dict['ID'].lower()
 
     def get_package_info(self):
         with open('./pypia/package_info.json', 'r') as package_info:
@@ -63,60 +66,29 @@ class Distro():
         self.required_packages = package_dict['required_packages'][self.distro]
         self.install_command = package_dict['install_commands'][self.distro]
 
-    def get_distro(self):
-        """
-        Get the name of the Linux distribution this script is being run on.
-
-        Returns
-        -------
-        distro : str
-            Short name for operating system listed in `/etc/os-release`
-        """
-        os_release = subprocess.check_output(['cat', '/etc/os-release']) \
-            .decode('utf-8').splitlines()
-        self.os_dict = {i.split('=')[0]: i.split('=')[1].strip('"')
-                   for i in os_release if '=' in i}
-        self.distro = self.os_dict['ID'].lower()
-
     def install_packages(self):
-        """
-        Install packages required for Private Internet Access to be accessible
-        from the Network Manager applet. You may be prompted twice about
-        installing required packages: once by this script and once by the package
-        manager. If you say 'yes' this script's prompt and 'no' at the package
-        manager's prompt, the script will continue and appear to complete
-        successfully. But `openvpn` may not have been installed and trying to
-        connect to the PIA routes will fail.
-
-        Parameters
-        ----------
-        package_dict : dict
-            Dictionary with required packages (as lists) and installation commands
-            (as strings) for each supported distribution.
-
-        """
         for package in self.required_packages:
             raw = input('Installing {}. OK? (y/n): '.format(package))
             if (raw.lower() == 'y') | (raw.lower() == 'yes'):
-                os.system(self.install_command.format(package))
+                subprocess.call(['sudo'] + [i for i in self.install_command.format(package).split()])
             else:
                 sys.exit('\n{} required. Exiting.\n'.format(package))
 
-
     def restart_network_manager(self):
-        """
-        Use `systemctl` (systemd) command to restart the Network Manager service.
-
-        Notes
-        -----
-            This will not work on systems without systemd.
-
-        """
         print('Restarting network manager...')
-        os.system('systemctl restart NetworkManager.service')
+        subprocess.call(['sudo', 'systemctl', 'restart', 'NetworkManager.service'])
 
 
 class PiaConfigurations():
+    """
+    Gets user credentials from user, downloads PIA certificate, downloads
+    PIA configurations, and deletes old keyfiles.
+
+    Notes
+    -----
+    The credentials are stored in the VPN keyfiles in
+    `/etc/NetworkManager/system-connections/`.
+    """
 
     def __init__(self):
         self.cert_address = 'https://www.privateinternetaccess.com/openvpn/ca.rsa.2048.crt'
@@ -125,20 +97,6 @@ class PiaConfigurations():
         self.get_vpn_configs()
 
     def get_credentials(self):
-        """
-        Request Private Internet Access user credentials.
-
-        The credentials are stored in the VPN configuration files in
-        `/etc/NetworkManager/system-connections/`.
-
-        Returns
-        -------
-        username : str
-            The user's Private Internet Access username
-        password : str
-            The user's Private Internet Access password
-
-        """
         self.username = input('\nEnter your PIA username: ')
         while True:
             self.password = getpass.getpass(prompt='Enter your password: ')
@@ -147,42 +105,18 @@ class PiaConfigurations():
                 break
             print("\nPasswords do not match. Please try again.")
 
-
     def copy_cert(self):
-        """
-        Download and save Private Internet Access certificate to
-        `/etc/openvpn/ca.rsa.2048.crt`.
-
-        An internet connection is needed if cert hasn't already been downloaded.
-        If for some reason the cert is not able to be downloaded, or if it hasn't
-        previously been downloaded and saved to `/etc/openvpn/ca.rsa.2048.crt`, the script
-        will exit.
-
-        """
         try:
-            urllib.request.urlretrieve(self.cert_address, '/etc/openvpn/ca.rsa.2048.crt')
+            print('\nDownloading PIA certificate...')
+            subprocess.call(['sudo', 'curl', '--url', self.cert_address, '-o', '/etc/openvpn/ca.rsa.2048.crt'])
             if os.path.exists('/etc/openvpn/ca.rsa.2048.crt'):
                 print('PIA certificate downloaded and saved to /etc/openvpn/')
-        except (HTTPError, URLError):
+        except URLError:
             sys.exit('\nPIA cert was not able to be downloaded and saved. ' +
                      'This script needs an internet connection to be able to' +
                      'fetch it automatically. Exiting.\n')
 
     def get_vpn_configs(self):
-        """
-        Download json with Private Internet Access server information to be
-        parsed and added to Network Manager VPN configuration files.
-
-        An internet connection is needed to download the VPN configuration json.
-        If the Private Internet Access server information page is unable to be
-        resolved, the script will exit.
-
-        Returns
-        -------
-        configs_dict : dict
-            Dictionary of VPN configuration dictionaries
-
-        """
         try:
             with urllib.request.urlopen(self.config_address) as url:
                 config_json = url.read().decode('utf-8').split('\n')[0]
@@ -194,17 +128,15 @@ class PiaConfigurations():
                      'fetch them automatically. Exiting.\n')
 
     def delete_old_configs(self):
-        """
-        Delete old Private Internet Access VPN configuration files. This will only
-        delete files that are prefixed with 'PIA - '.
-
-        """
         for f in os.listdir(self.config_dir):
             if f.startswith('PIA - '):
-                os.remove('{}{}'.format(self.config_dir, f))
+                subprocess.call(['sudo', 'rm', '{}{}'.format(self.config_dir, f)])
 
 
 class Keyfile():
+    """
+    Outputs a NetworkManager keyfile specific to PIA VPN route information.
+    """
 
     def __init__(self, vpn_dict, username, password, **kwargs):
         self.config_dir = '/etc/NetworkManager/system-connections/'
@@ -230,15 +162,22 @@ class Keyfile():
                                                   password)
 
     def create_keyfile(self):
-        with open(self.config_file, 'w') as f:
-            f.write(self.keyfile_string)
-        os.chmod(self.config_file, 0o600)
+        with tempfile.NamedTemporaryFile(mode='w') as ntf:
+            ntf.write(self.keyfile_string)
+            ntf.seek(0)
+            subprocess.call(['sudo', 'cp', ntf.name, '/etc/NetworkManager/system-connections/'])
+            file_name = '/etc/NetworkManager/system-connections/' + ntf.name.split('/')[-1]
+        subprocess.call(['sudo', 'mv', file_name, self.config_file])
+        subprocess.call(['sudo', 'chmod', '0600', self.config_file])
 
     def __str__(self):
         return self.keyfile_string
 
 
 class Connection():
+    """
+    Handles connection to or disconnection from a PIA VPN server.
+    """
 
     def __init__(self, region):
         self.region = region
@@ -282,6 +221,9 @@ class Connection():
 
 
 class Latencies():
+    """
+    Uses threads to ping all PIA VPN servers and then tabulates latencies.
+    """
 
     def __init__(self, region):
         pia = PiaConfigurations()
@@ -334,62 +276,58 @@ class Latencies():
                                                                k, self.latencies[k])
         return table
 
+
 def main():
-        parser = argparse.ArgumentParser(description='Connection tools for PIA VPNs.')
-        parser.add_argument('-i', '--initialize', action='store_true',
-                            help='configure pia vpn routes as networkmanager keyfiles. requires sudo priveleges. use this flag on first run and anytime you want to refresh pia vpn routes')
-        parser.add_argument('-p', '--ping', action='store_true',
-                            help='ping each vpn server and list latencies')
-        parser.add_argument('-s', '--shuffle', action='store_true',
-                            help='connect to or shuffle a random vpn')
-        parser.add_argument('-r', '--region', choices=['us', 'all', 'int'],
-                            help='"us" for US only, "int" for non-US, "all" for worldwide')
-        parser.add_argument('-f', '--fastest', action='store_true',
-                            help='connect to network with lowest ping latency')
-        parser.add_argument('-d', '--disconnect', action='store_true',
-                            help='disconnect current PIA vpn connection')
-        args = parser.parse_args()
-
-        def print_help_and_exit():
-            parser.print_help()
-            parser.exit(1)
-
-        if not any(vars(args).values()):
+    parser = argparse.ArgumentParser(description='Connection tools for PIA VPNs.')
+    parser.add_argument('-i', '--initialize', action='store_true',
+                        help='configure pia vpn routes as networkmanager keyfiles. use this flag on first run and anytime you want to refresh pia vpn routes')
+    parser.add_argument('-p', '--ping', action='store_true',
+                        help='ping each vpn server and list latencies')
+    parser.add_argument('-s', '--shuffle', action='store_true',
+                        help='connect to or shuffle a random vpn')
+    parser.add_argument('-r', '--region', choices=['us', 'all', 'int'],
+                        help='"us" for US only, "int" for non-US, "all" for worldwide')
+    parser.add_argument('-f', '--fastest', action='store_true',
+                        help='connect to network with lowest ping latency')
+    parser.add_argument('-d', '--disconnect', action='store_true',
+                        help='disconnect current PIA vpn connection')
+    args = parser.parse_args()
+    def print_help_and_exit():
+        parser.print_help()
+        parser.exit(1)
+    if not any(vars(args).values()):
+        print_help_and_exit()
+    if args.initialize:
+        distro = Distro()
+        distro.install_packages()
+        pia = PiaConfigurations()
+        pia.get_credentials()
+        pia.copy_cert()
+        pia.delete_old_configs()
+        for vpn_dict in pia.configs_dict.items():
+            Keyfile(vpn_dict, pia.username, pia.password)
+        distro.restart_network_manager()
+        print("Creation of VPN config files was successful.\n")
+    if not args.region:
+        region = 'us'
+    else:
+        region = args.region
+        if not any([args.ping, args.shuffle, args.fastest]):
             print_help_and_exit()
-
-        if args.initialize:
-            verify_running_as_root()
-            distro = Distro()
-            distro.install_packages()
-            pia = PiaConfigurations()
-            pia.get_credentials()
-            pia.copy_cert()
-            pia.delete_old_configs()
-            for vpn_dict in pia.configs_dict.items():
-                Keyfile(vpn_dict, pia.username, pia.password)
-            distro.restart_network_manager()
-            print("Creation of VPN config files was successful.\n")
-
-        if not args.region:
-            region = 'us'
-        else:
-            region = args.region
-            if not any([args.ping, args.shuffle, args.fastest]):
-                print_help_and_exit()
-        conn = Connection(region)
-        if args.disconnect:
-            conn.disconnect_vpn()
-        if args.fastest:
-            conn.disconnect_vpn()
-            lat = Latencies(region)
-            print(lat)
-            conn.make_connection(lat.fastest)
-        elif args.ping:
-            lat = Latencies(region)
-            print(lat)
-        if args.shuffle:
-            conn.disconnect_vpn()
-            conn.connect_random_vpn()
+    conn = Connection(region)
+    if args.disconnect:
+        conn.disconnect_vpn()
+    if args.fastest:
+        conn.disconnect_vpn()
+        lat = Latencies(region)
+        print(lat)
+        conn.make_connection(lat.fastest)
+    elif args.ping:
+        lat = Latencies(region)
+        print(lat)
+    if args.shuffle:
+        conn.disconnect_vpn()
+        conn.connect_random_vpn()
 
 if __name__ == "__main__":
     main()
