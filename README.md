@@ -38,7 +38,7 @@ Route/VPN server information is downloaded from [this page](https://www.privatei
 #### Installation
 1. You can use pip to install this module:
 `pip install pypia`
-2. Once installed via `pip`, you should do `sudo pypia -i` to initialize, which will configure the NetworkManager keyfiles. The script needs root permissions to install dependencies via the package manager and to write the VPN config files to `/etc/NetworkManager/system-connections/`, so you will be prompted to enter the root password.
+2. Once installed via `pip`, you should do `pypia -i` to initialize, which will configure the NetworkManager keyfiles. Root permissions are required to install dependencies via the package manager and to write the VPN config files to `/etc/NetworkManager/system-connections/`, so you will be prompted to enter the root password.
 3. At some point in the installation process you will be prompted for your PIA-issued user ID (typically starts with a "p" and is followed by a bunch of numbers). You will also be prompted for your password, which is simply saved to the config files (in plain text, but only root user can view/edit those files).
 
 If everything goes as intended, the VPN routes will be accessible from the *VPN Connections* menu in the NetworkManager applet or via the `nmcli` command line tool.
