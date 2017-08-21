@@ -4,7 +4,7 @@ setup(
     name = 'pypia',
     packages = ['pypia'],
     version = '0.2.3',
-    package_data = {'pypia': 'pakage_info.json'}
+    package_data = {'pypia': 'pakage_info.json'},
     author = 'Dan Hallau',
     author_email = 'pia@hallau.us',
     url = 'https://github.com/dagrha/pypia',
