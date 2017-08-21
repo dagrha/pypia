@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name = 'pypia',
     packages = ['pypia'],
-    version = '0.2.0',
+    version = '0.2.1',
     author = 'Dan Hallau',
     author_email = 'pia@hallau.us',
     url = 'https://github.com/dagrha/pypia',

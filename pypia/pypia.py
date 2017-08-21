@@ -61,7 +61,7 @@ class Distro():
         self.distro = self.os_dict['ID'].lower()
 
     def get_package_info(self):
-        with open('./pypia/package_info.json', 'r') as package_info:
+        with open('./package_info.json', 'r') as package_info:
             package_dict = json.load(package_info)
         self.required_packages = package_dict['required_packages'][self.distro]
         self.install_command = package_dict['install_commands'][self.distro]
