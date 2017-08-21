@@ -61,7 +61,9 @@ class Distro():
         self.distro = self.os_dict['ID'].lower()
 
     def get_package_info(self):
-        with open('./package_info.json', 'r') as package_info:
+        json_path_list = os.path.abspath(__file__).split('/')[:-1] + ['package_info.json']
+        json_path = os.path.join(*json_path_list)
+        with open('/' + json_path, 'r') as package_info:
             package_dict = json.load(package_info)
         self.required_packages = package_dict['required_packages'][self.distro]
         self.install_command = package_dict['install_commands'][self.distro]
@@ -128,9 +130,12 @@ class PiaConfigurations():
                      'fetch them automatically. Exiting.\n')
 
     def delete_old_configs(self):
-        for f in os.listdir(self.config_dir):
-            if f.startswith('PIA - '):
-                subprocess.call(['sudo', 'rm', '{}{}'.format(self.config_dir, f)])
+        config_list = subprocess.check_output(['sudo', 'ls', self.config_dir]).decode('utf-8').split('\n')
+        if any([i for i in config_list if i.startswith('PIA - ')]):
+            print('Deleting old PIA config files...')
+            for f in config_list:
+                if f.startswith('PIA - '):
+                    subprocess.call(['sudo', 'rm', '{}{}'.format(self.config_dir, f)])
 
 
 class Keyfile():

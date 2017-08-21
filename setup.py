@@ -3,8 +3,8 @@ from setuptools import setup
 setup(
     name = 'pypia',
     packages = ['pypia'],
-    version = '0.2.3',
-    package_data = {'pypia': 'pakage_info.json'},
+    version = '0.2.10',
+    package_data = {'pypia': ['package_info.json']},
     author = 'Dan Hallau',
     author_email = 'pia@hallau.us',
     url = 'https://github.com/dagrha/pypia',
