@@ -110,6 +110,8 @@ class PiaConfigurations():
     def copy_cert(self):
         try:
             print('\nDownloading PIA certificate...')
+            if not os.path.exists('/etc/openvpn/'):
+                subprocess.call(['sudo', 'mkdir', '/etc/openvpn'])
             subprocess.call(['sudo', 'curl', '--url', self.cert_address, '-o', '/etc/openvpn/ca.rsa.2048.crt'])
             if os.path.exists('/etc/openvpn/ca.rsa.2048.crt'):
                 print('PIA certificate downloaded and saved to /etc/openvpn/')
