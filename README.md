@@ -19,6 +19,7 @@ The `pypia` package has been designed to automatically detect your operating sys
 * Kali
 * Arch
 * Solus
+* CentOS
 
 ****For other distros, please see note at end of this README***
 
