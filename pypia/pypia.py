@@ -128,9 +128,9 @@ class PiaConfigurations():
             with urllib.request.urlopen(self.config_address) as url:
                 config_json = url.read().decode('utf-8').split('\n')[0]
         except urllib.error.URLError:
-            logger.warning('\nThere may have been an issue with the HTTPS request ' +
-                           'to the PIA server info page. Trying to bypass cert ' +
-                           'check that python performs, since PEP 476.\n')
+            logger.warning('\nWARNING: There may have been an issue with certificate ' +
+                           'verification to the PIA server info page. Trying to ' +
+                           'bypass cert check that python performs since PEP 476.\n')
             try:
                 context = ssl._create_unverified_context()
                 with urllib.request.urlopen(self.config_address, context=context) as url:
