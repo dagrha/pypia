@@ -291,8 +291,10 @@ class Latencies():
         table = ' {:<20} {:<17} {:>11} \n'.format('name', 'ip', 'ping (ms)')
         table += '-' * 52 + '\n'
         for k in sorted(self.latencies, key=self.latencies.get):
-            table += '| {:<18} | {:<15} | {:>9.2f} |\n'.format(self.ip_addresses[k],
-                                                               k, self.latencies[k])
+            j = k.split('.')
+            table += '| {:<18} | {:>3}.{:>3}.{:>3}.{:>3} | {:>9.2f} |\n' \
+                .format(self.ip_addresses[k], j[0], j[1], j[2], j[3],
+                        self.latencies[k])
         return table
 
 
