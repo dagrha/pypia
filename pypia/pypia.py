@@ -37,11 +37,14 @@ import argparse
 from threading import Thread
 from queue import Queue
 import tempfile
+import ssl
+import logging
 try:
     import urllib.request
 except ImportError:
     sys.exit("Sorry, this script requires python 3.x")
 
+logger = logging.getLogger(__name__)
 
 class Distro():
     """
@@ -124,12 +127,21 @@ class PiaConfigurations():
         try:
             with urllib.request.urlopen(self.config_address) as url:
                 config_json = url.read().decode('utf-8').split('\n')[0]
-            configs_dict = json.loads(config_json)
-            self.configs_dict = {k: v for k, v in configs_dict.items() if isinstance(v, dict) and v.get('dns')}
-        except (HTTPError, URLError):
-            sys.exit('\nPIA VPN configurations were not able to be downloaded.' +
+        except urllib.error.URLError:
+            logger.warning('\nThere may have been an issue with the HTTPS request ' +
+                           'to the PIA server info page. Trying to bypass cert ' +
+                           'check that python performs, since PEP 476.\n')
+            try:
+                context = ssl._create_unverified_context()
+                with urllib.request.urlopen(self.config_address, context=context) as url:
+                    config_json = url.read().decode('utf-8').split('\n')[0]
+            except urllib.error.URLError:
+                sys.exit('\nPIA VPN configurations were not able to be downloaded.' +
                      'This script needs an internet connection to be able to ' +
                      'fetch them automatically. Exiting.\n')
+        configs_dict = json.loads(config_json)
+        self.configs_dict = {k: v for k, v in configs_dict.items() if isinstance(v, dict) and v.get('dns')}
+
 
     def delete_old_configs(self):
         config_list = subprocess.check_output(['sudo', 'ls', self.config_dir]).decode('utf-8').split('\n')
