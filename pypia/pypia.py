@@ -173,11 +173,13 @@ class Keyfile():
              'username={}', 'comp-lzo=yes', 'remote={}', 'connection-type=password',
              'password-flags=0', 'ca=/etc/openvpn/ca.rsa.2048.crt', 'port={}',
              'auth={}', 'cipher={}', '\n', '[vpn-secrets]',
-             'password={}', '\n', '[ipv4]', 'method=auto']
+             'password={}', '\n', '[ipv4]', 'method=auto',
+             'dns=209.222.18.222;209.222.18.218;',
+             'ignore-auto-dns=true', '\n', '[ipv6]', 'method=ignore']
         self.keyfile_string = '\n'.join(l).format('PIA - ', self.configs[1]['name'],
                                                   uuid.uuid4(), username,
-                                                  self.configs[1]['dns'], self.port,
-                                                  self.auth, self.cipher,
+                                                  self.configs[1]['openvpn_tcp']['best'].split(':')[0],
+                                                  self.port, self.auth, self.cipher,
                                                   password)
 
     def create_keyfile(self):
