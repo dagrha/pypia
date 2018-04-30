@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name = 'pypia',
     packages = ['pypia'],
-    version = '0.3.1',
+    version = '0.3.4',
     package_data = {'pypia': ['package_info.json']},
     author = 'Dan Hallau',
     author_email = 'pia@hallau.us',
@@ -29,7 +29,7 @@ Private Internet Access configuration package for various Linux distributions
 
 Configures NetworkManager keyfiles for OpenVPN routes to Private Internet Access servers.
 
-pypia automatically detects your operating system. Currently the supported distros are Fedora, Manjaro, Ubuntu, Elementary OS, Antergos, Linuxmint, openSUSE, Kali, Arch.
+pypia automatically detects your operating system. Currently the supported distros are Fedora, Manjaro, Ubuntu, Elementary OS, Antergos, Linuxmint, openSUSE, Kali, Arch, CentOS.
 
 In addition to configuring NetworkManager keyfiles, this module also can be invoked to ping all PIA endpoints, connect to the fastest, connect to a random server, etc. Use `pypia --help` for further descriptions and usage.
 
