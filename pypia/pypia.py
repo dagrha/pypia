@@ -72,7 +72,7 @@ class Distro():
         self.required_packages = package_dict['required_packages'].get(self.distro)
         self.install_command = package_dict['install_commands'].get(self.distro)
         if not self.required_packages:
-            logging.ERROR('{} is not yet supported.'.format(self.distro))
+            logging.ERROR('{} is not yet supported.'.format(self.distro.upper()))
             print('Install of pypia fail. Please follow instructions at')
             print('github.com/dagrha/pypia to add support for your distro.')
 
