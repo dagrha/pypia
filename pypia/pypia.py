@@ -328,6 +328,7 @@ def main():
         print_help_and_exit()
     if args.initialize:
         distro = Distro()
+        print('Your distro appears to be {}.'.format(distro.distro.upper()))
         distro.install_packages()
         pia = PiaConfigurations()
         pia.get_credentials()
