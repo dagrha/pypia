@@ -319,9 +319,11 @@ def main():
     parser.add_argument('-d', '--disconnect', action='store_true',
                         help='disconnect current PIA vpn connection')
     args = parser.parse_args()
+
     def print_help_and_exit():
         parser.print_help()
         parser.exit(1)
+
     if not any(vars(args).values()):
         print_help_and_exit()
     if args.initialize:
@@ -355,6 +357,7 @@ def main():
     if args.shuffle:
         conn.disconnect_vpn()
         conn.connect_random_vpn()
+
 
 if __name__ == "__main__":
     main()
