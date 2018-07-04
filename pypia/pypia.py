@@ -46,6 +46,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+
 class Distro():
     """
     Handles detection of Linux distribution, installs required packages,
@@ -60,7 +61,7 @@ class Distro():
         os_release = subprocess.check_output(['cat', '/etc/os-release']) \
             .decode('utf-8').splitlines()
         self.os_dict = {i.split('=')[0]: i.split('=')[1].strip('"')
-                   for i in os_release if '=' in i}
+                        for i in os_release if '=' in i}
         self.distro = self.os_dict['ID'].lower()
 
     def get_package_info(self):
@@ -141,11 +142,10 @@ class PiaConfigurations():
                     config_json = url.read().decode('utf-8').split('\n')[0]
             except urllib.error.URLError:
                 sys.exit('\nPIA VPN configurations were not able to be downloaded.' +
-                     'This script needs an internet connection to be able to ' +
-                     'fetch them automatically. Exiting.\n')
+                         'This script needs an internet connection to be able to ' +
+                         'fetch them automatically. Exiting.\n')
         configs_dict = json.loads(config_json)
         self.configs_dict = {k: v for k, v in configs_dict.items() if isinstance(v, dict) and v.get('dns')}
-
 
     def delete_old_configs(self):
         config_list = subprocess.check_output(['sudo', 'ls', self.config_dir]).decode('utf-8').split('\n')
