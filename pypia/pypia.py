@@ -68,8 +68,12 @@ class Distro():
         json_path = os.path.join(*json_path_list)
         with open('/' + json_path, 'r') as package_info:
             package_dict = json.load(package_info)
-        self.required_packages = package_dict['required_packages'][self.distro]
-        self.install_command = package_dict['install_commands'][self.distro]
+        self.required_packages = package_dict['required_packages'].get(self.distro)
+        self.install_command = package_dict['install_commands'].get(self.distro)
+        if not self.required_packages:
+            logging.ERROR('{} is not yet supported.'.format(self.distro))
+            print('Install of pypia fail. Please follow instructions at')
+            print('github.com/dagra/pypia to add support for your distro.')
 
     def install_packages(self):
         for package in self.required_packages:
