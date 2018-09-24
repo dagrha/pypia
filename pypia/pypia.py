@@ -39,6 +39,7 @@ from queue import Queue
 import tempfile
 import ssl
 import logging
+from pathlib import Path
 try:
     import urllib.request
 except ImportError:
@@ -86,7 +87,11 @@ class Distro():
 
     def restart_network_manager(self):
         print('Restarting network manager...')
-        subprocess.call(['sudo', 'systemctl', 'restart', 'NetworkManager.service'])
+        ## Make sure we're actually on a system that is running systemd
+        if (Path("/bin/systemctl").is_file()):
+            subprocess.call(['sudo', 'systemctl', 'restart', 'NetworkManager.service'])
+        else:
+            subprocess.call(['sudo', 'rc-service', 'NetworkManager', 'restart'])
 
 
 class PiaConfigurations():
