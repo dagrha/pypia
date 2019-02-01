@@ -275,8 +275,12 @@ class Latencies():
 
     def ping(self):
         ip = self.q.get()
-        result = subprocess.check_output(['ping', '-c', '3', ip]).decode('utf-8')
-        avg = float(result.split('=')[-1].split('/')[1])
+        try:
+            result = subprocess.check_output(['ping', '-c', '5', ip]).decode('utf-8')
+            avg = float(result.split('=')[-1].split('/')[1])
+        except subprocess.CalledProcessError:
+            # if ping fails then set latency to arbitrarily high value
+            avg = 999999.99
         self.latencies[ip] = avg
         self.q.task_done()
 
