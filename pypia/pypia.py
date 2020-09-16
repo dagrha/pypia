@@ -123,7 +123,7 @@ class PiaConfigurations():
             subprocess.call(['sudo', 'curl', '--url', self.cert_address, '-o', '/etc/openvpn/ca.rsa.2048.crt'])
             if os.path.exists('/etc/openvpn/ca.rsa.2048.crt'):
                 print('PIA certificate downloaded and saved to /etc/openvpn/')
-        except URLError:
+        except urllib.error.URLError:
             sys.exit('\nPIA cert was not able to be downloaded and saved. ' +
                      'This script needs an internet connection to be able to' +
                      'fetch it automatically. Exiting.\n')
